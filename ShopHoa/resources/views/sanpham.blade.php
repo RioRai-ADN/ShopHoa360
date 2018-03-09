@@ -26,7 +26,7 @@
 								<p class="single-item-title">{{$tsp->name}}</p>
 								<div class="single-item">
 									<div class="single-item-header">
-										<a href="{{route('chitietsp',$tsp->id)}}"><img src="qt69admin/image/product/{{$tsp->image}}" alt="cường đẹp trai =)))"  height="243px" width="100%"></a>
+										<a href="{{route('chitietsp',$tsp->id)}}"><img src="qt69admin/image/product/{{$tsp->image}}" alt="hinh anh hoa"  height="243px" width="100%"></a>
 									</div>
 									<div class="single-item-body">
 										<p class="single-item-price">
