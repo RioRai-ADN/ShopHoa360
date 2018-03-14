@@ -10,28 +10,40 @@
                     </div>
                     <!-- /.col-lg-12 -->
                     <div class="col-lg-7" style="padding-bottom:120px">
-                        <form action="{!! Route('postThemUser') !!}" method="POST">
-                            <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                        @if(count($errors)>0)
+                            <div class="alert alert-danger">
+                                @foreach($errors->all() as $err)
+                                    {{$err}}<br>
+                                @endforeach
+                            </div>
+                        @endif
+                        @if(session('thongbao'))
+                                <div class="alert alert-success">
+                                    {{session('thongbao')}}
+                                </div>
+                            @endif
+                        <form action="{{route('adminthemuser')}}" method="POST" >
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" name="email" placeholder="Please Enter Email" value="{{ old('email')}}" />
+                            </div>
                             <div class="form-group">
                                 <label>Username</label>
-                                <input class="form-control" name="txtUser" placeholder="Please Enter Username" required />
+                                <input class="form-control" name="name" placeholder="Please Enter Username" value="{{ old('name')}}" />
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
-                                <input type="password" class="form-control" name="txtPass" placeholder="Please Enter Password" required />
+                                <input type="password" class="form-control" name="password" placeholder="Please Enter Password" />
                             </div>
                             <div class="form-group">
                                 <label>RePassword</label>
-                                <input type="password" class="form-control" name="txtRePass" placeholder="Please Enter RePassword" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" class="form-control" name="txtEmail" placeholder="Please Enter Email" required />
+                                <input type="password" class="form-control" name="re_password" placeholder="Please Enter RePassword" />
                             </div>
                             <div class="form-group">
                                 <label>User Level</label>
                                 <label class="radio-inline">
-                                    <input name="rdoLevel" value="1" checked="" type="radio">Admin
+                                    <input name="rdoLevel" value="1"  type="radio">Admin
                                 </label>
                                 <label class="radio-inline">
                                     <input name="rdoLevel" value="2" type="radio">Member

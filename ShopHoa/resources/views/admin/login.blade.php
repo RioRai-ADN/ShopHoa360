@@ -10,16 +10,16 @@
     <title>Admin - Shophoa360</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="qt69admin/admin/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="../../qt69admin/admin/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- MetisMenu CSS -->
-    <link href="qt69admin/admin/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet" type="text/css">
+    <link href="../../qt69admin/admin/bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="qt69admin/admin/dist/css/sb-admin-2.css" rel="stylesheet" type="text/css">
+    <link href="../../qt69admin/admin/dist/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="qt69admin/admin/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../../qt69admin/admin/bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 </head>
 
@@ -33,8 +33,20 @@
                         <h3 class="panel-title">Please Sign In</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form" action="{!! Route('postDangNhap') !!}" method="POST">
-                            <input type="hidden" name="_token" value="{!! csrf_token() !!}">
+                         @if(count($errors)>0)
+                            <div class="alert alert-danger">
+                                @foreach($errors->all() as $err)
+                                    {{$err}}<br>
+                                @endforeach
+                            </div>
+                            @endif
+                             @if(session('thongbao'))
+                                <div class="alert alert-success">
+                                    {{session('thongbao')}}
+                                </div>
+                        @endif
+                        <form role="form" action="360qt69" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}"
                             <fieldset>
                                 <div class="form-group">
                                     <input class="form-control" placeholder="E-mail" name="email" type="email" autofocus>

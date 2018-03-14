@@ -10,11 +10,10 @@
                     </div>
                     <!-- /.col-lg-12 -->
                     <div class="col-lg-7" style="padding-bottom:120px">
-                        <form action="{!! Route('postSuaThongTinUser') !!}" method="POST">
-                            <input type="hidden" name="_token" value="{!! csrf_token() !!}"/>
+                        <form action="" method="POST">
                             <div class="form-group">
                                 <label>Username</label>
-                                <input class="form-control" name="txtUser" value="quoctuan" placeholder="Please Enter Username" />
+                                <input class="form-control" name="txtUser" value="quoctuan" disabled />
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
