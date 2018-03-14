@@ -5,7 +5,7 @@
 		<div id="content" class="space-top-none">
 			<div class="main-content">
 				<div class="space60">&nbsp;</div>
-				<div class="row">
+				<div class="row" >
 					<div class="col-sm-3" >
 
 						<ul class="aside-menu">
@@ -16,7 +16,7 @@
 						<br>
 						<br>
 						<form action="search1" method="GET">
-						<input type="hidden" name="_token" value="{{ csrf_token() }}">
+							<input type="hidden" name="_token" value="{{ csrf_token() }}">
 						<h3 class="header" style="background-color: #0277b8;;border-radius: 4px;color: white;font-size: 17px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tư vấn chọn hoa</h3>
 						<div class="body" style="border: solid 1px #0277b8;padding:10px;">
 							<span class="filter-title" style="font-size: 12px;font-weight:bold;">Chủ đề</span>
@@ -40,15 +40,15 @@
 							</div>
 						</div>
 						</form>
-					<div class="col-sm-9">
+					<div class="col-sm-9" id='col3'>
 						<div class="beta-products-list" >
-							<h4>{{$namesp->name}}</h4>
+							<h4>Tìm Kiếm</h4>
 							<div class="beta-products-details">
-								<p class="pull-left">Tìm thấy {{count($trangsp1)}} sản phẩm </p>
+								<p class="pull-left">Tìm thấy {{count($search1)}} sản phẩm </p>
 								<div class="clearfix"></div>
 							</div>
 							<div id="rowborder">
-							@foreach($trangsp as $tsp)
+							@foreach($search as $tsp)
 							<div class="col-sm-4" id='col3'>
 								<p class="single-item-title">{{$tsp->name}}</p>
 								<div class="single-item">
@@ -67,12 +67,8 @@
 										</p>
 									</div>
 									<div class="single-item-caption">
-										<a class="add-to-cart pull-left" href="#"><i class="fa fa-shopping-cart"></i></a>
-										@if(Auth::check())
-										<a class="beta-btn primary" href="{{url('add/'.$tsp->id.'/'.Auth::user()->id)}}">+Giỏ hàng <i class="fa fa-chevron-right"></i></a>
-										@else
-										<a class="beta-btn primary" href={{route('logincart')}}>+Giỏ hàng <i class="fa fa-chevron-right"></i></a>
-										@endif
+										<a class="add-to-cart pull-left" href="product.html"><i class="fa fa-shopping-cart"></i></a>
+										<a class="beta-btn primary" href="product.html">+Giỏ hàng <i class="fa fa-chevron-right"></i></a>
 										<div class="clearfix"></div>
 										<br>
 										<br>
@@ -81,10 +77,11 @@
 							</div>
 							@endforeach
 							</div>
-							<div>{{$trangsp->links()}}</div>
-							<div class="space40">&nbsp;</div>		
+							<div class="space40">&nbsp;</div>	
 						</div>
 						</div> <!-- .beta-products-list -->
+						<div class="col-sm-3"></div>
+						<div class="col-sm-9"><div> {{ $search->links() }}</div></div>
 					</div>
 				</div> <!-- end section with sidebar and main content -->
 			</div> <!-- .main-content -->

@@ -3,9 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\slide;
 use App\sanpham;
 use App\loaisp;
+use App\User;
+use App\shoppingcart;
+use App\comment;
+use App\bill;
+use App\customer;
+use App\order;
+use Hash;
+use Mail;
+use Cart;
 
 class DoAn_Controller extends Controller
 {
@@ -18,12 +28,144 @@ class DoAn_Controller extends Controller
     	return view('trangchu',compact('slide','spkm','sanphamc','spkmc'));
         
     }
+
     public function getsp($sp)
     {
         $trangsp =sanpham::where('idloai',$sp)->paginate(9);
         $trangsp1 =sanpham::where('idloai',$sp)->get();
         $namesp =loaisp::where('id',$sp)->first();
     	return view('sanpham',compact('trangsp','namesp','trangsp1'));
+    }
+
+    public function getlogin_index()
+    {
+        return view('login_index');
+    }
+
+     public function postlogin(Request $request)
+    {
+        $this->validate($request,
+            [
+                //'g-recaptcha-response' => 'required',
+            ],
+            [
+                //'g-recaptcha-response.required'=>'check you is not robot !'
+            ]);
+        if(Auth::attempt(['email'=>$request->email,'password'=>$request->password, 'confirmed' => 1]))
+           {
+             return redirect('../'); 
+           }
+        else
+        {
+            return redirect('login')->with('thongbao','Đăng nhập không thành công');
+        }
+    }
+
+    public function getsignup_index()
+    {
+        return view('signup');
+    }
+
+     public function postsignup_index(Request $request)
+    {
+        $this->validate($request,
+            [
+                'email'=>'unique:users,email',//min:3
+                're_password'=>'same:password',
+                // 'g-recaptcha-response' => 'required'
+            ],
+            [
+                'email.unique'=>'email đã tồn tại',
+                're_password.same'=>'Mật khẩu không trùng nhau',
+                // 'g-recaptcha-response.required'=>'check you is not robot !'
+
+            ]
+        );
+        $confirmation_code = time().uniqid(true);
+        $user=new User();
+        $user->name=$request->name;
+        $user->email=$request->email;
+        $user->password=Hash::make($request->password);
+        $user->phone=$request->phone;
+        $user->address=$request->address;
+        $user->loaiuser=2;
+        $user->confirmed=0;
+        $user->confirmation_code = $confirmation_code;
+        $user->save();
+        Mail::send('verify', ['confirmation_code'=>$confirmation_code], function($message) use ($request) {
+            $message->from('cuonganh365@gmail.com','ShopHoa360');
+             $message->to( $request->email,$request->name)   
+                ->subject('Confirm your account on ShopHoa360 ');
+        });
+         return redirect('login')->with('thongbao','Vui lòng xác nhận tài khoản email')->withinput();
+    }
+
+    public function verify($code)
+    {
+        $user = User::where('confirmation_code', $code);
+
+        if ($user->count() > 0) {
+            $user->update([
+                'confirmed' => 1,
+                'confirmation_code' => null
+            ]);
+            $notification_status = 'Bạn đã xác nhận thành công';
+        } else {
+            $notification_status ='Mã xác nhận không chính xác';
+        }
+
+        return redirect(route('login_index'))->with('status', $notification_status);
+    }
+
+    public function getthongtin()
+    {
+        return view('thongtin');
+    }
+    public function postthongtin(Request $request,$id)
+    {
+         $this->validate($request,
+            [
+                'name'=>'required',
+                'address'=>'required',
+                'phone'=>'required',
+                
+            ],
+            [
+                 'name.required'=>'Bạn chưa nhập tên',
+                 'address.required'=>'Bạn chưa nhập địa chỉ',
+                 'phone.required'=>'Bạn chưa nhập số điện thoại',
+                 
+            ]);
+        if($request->oldpass || $request->password_1 || $request->password_2 != null)
+            {
+                 $this->validate($request,
+                    [
+                        'oldpass'=>'required',
+                        'password_1'=>'required',
+                        'password_2'=>'required',
+                        'password_2'=>'same:password_1',
+                    ],
+                    [
+                         'oldpass.required'=>'Nhập lại mật khẩu cũ khi đổi mật khẩu',
+                         'password_1.required'=>'Không được bỏ trống mật khẩu mới',
+                         'password_2.required'=>'Không được bỏ trống xác nhận mật khẩu',
+                         'password_2.same'=>'Mật khẩu không trùng nhau',
+                    ]);
+                   if(Auth::attempt(['password'=> $request->oldpass,'id'=>$id]))
+                       {
+                          $update=user::where('id',$id)->update(['name'=>$request->name,'address'=>$request->address,'phone'=>$request->phone,'password'=>Hash::make($request->password_1)]);
+                       }
+                    else
+                    {
+                        return redirect('thongtin/'.$request->id)->with('thongbao','Sai mật khẩu');
+                    }
+            }
+        else
+            {
+                $update=user::where('id',$id)->update(['name'=>$request->name,'address'=>$request->address,'phone'=>$request->phone]);
+            }
+        return redirect('thongtin/'.$request->id)->with('thongbao','Update thành công');
+        
     }
     public function getabout()
     {
@@ -36,19 +178,19 @@ class DoAn_Controller extends Controller
          public function getchitietsp($sp)
     {
         $chitiet=sanpham::where('id',$sp)->first();
+        $comment = comment::where('idhoa',$sp)->paginate(4);//nhiều
         $sptt=sanpham::where([
             ['idloai',$chitiet['idloai']],
             ['id','<>',$chitiet['id']],
             ])->inRandomOrder()->paginate(3);
         $topsp = sanpham::where('new',2)->paginate(3);
-        return view('chitietsp',compact('chitiet','sptt','topsp'));
+        return view('chitietsp',compact('chitiet','sptt','topsp','comment'));
     }
 
     public function getadmin()
     {
         return view('admin.login');
     }
-
     public function getdslh()
     {
        
@@ -259,11 +401,264 @@ class DoAn_Controller extends Controller
 
     public function getuser()
     {
-        return view('admin.user');
+        $user=user::all();
+        return view('admin.user',compact('user'));
     }
 
     public function getthemuser()
     {
         return view('admin.them_user');
     }
+
+// ----------------
+    public function postadmin(Request $request)
+    {
+        $this->validate($request,
+            [
+                'email'=>'required',
+                'password'=>'required'
+            ],
+            [
+                'email.required'=>'Bạn chưa nhập email',
+                'password.required'=>'Bạn chưa nhập password'
+            ]);
+        if(Auth::attempt(['email'=>$request->email,'password'=>$request->password]))
+            {
+                return redirect('admin/admindslh');
+            }
+        else
+        {
+            return redirect('360qt69')->with('thongbao','Đăng nhập không thành công');
+        }
+    }
+    
+    public function getlogout()
+    {
+        Auth::logout();
+        // Session::flush();
+        return redirect('360qt69');
+    }
+
+     public function getlogoutindex()
+    {
+         Auth::logout();
+         // Session::flush();
+        return redirect('/');
+    }
+
+    public function getsearch(Request $request)
+    {
+        $search=sanpham::where('name','like','%'.$request->search.'%')->paginate(9);
+        $search1=sanpham::where('name','like','%'.$request->search.'%')->get();
+        return view('search',compact('search','search1'));
+    }
+    public function getsearch1(Request $request)
+    {
+         $search=sanpham::where([['name','like','%'.$request->input1.'%'],['giakm','>',$request->input2.'%'],['giakm','<',$request->input3.'%'],['giakm','<>','0'],])->orwhere([['name','like','%'.$request->input1.'%'],['gia','>',$request->input2.'%'],['gia','<',$request->input3.'%'],['giakm','0'],])->paginate(9);
+         $search1=sanpham::where([['name','like','%'.$request->input1.'%'],['giakm','>',$request->input2.'%'],['giakm','<',$request->input3.'%'],['giakm','<>','0'],])->orwhere([['name','like','%'.$request->input1.'%'],['gia','>',$request->input2.'%'],['gia','<',$request->input3.'%'],['giakm','0'],])->get();
+        return view('search',compact('search','search1'));
+    }
+     public function add($id,$idUser)
+    {
+        $sanpham=sanpham::where('id',$id)->first();
+        $dk=shoppingcart::where([
+            ['idUser',$idUser],
+            ['idsp',$id],
+            ])->first();
+       // if($sanpham->giakm == 0) 
+       //  {
+       //      Cart::add(array('id'=>$id,'name'=>$sanpham->name,'qty'=>1,'price'=>$sanpham->gia,'options'=>array('img'=>$sanpham->image)));
+       //  } 
+       // else
+       //  {
+       //      Cart::add(array('id'=>$id,'name'=>$sanpham->name,'qty'=>1,'price'=>$sanpham->giakm,'options'=>array('img'=>$ sanpham->image)));
+       //  }
+        if(count($dk)!=0)
+        {
+            $dk->update([
+                'qty'=>$dk->qty +1,
+            ]);
+            return redirect()->back()->with('thongbao','Thêm vào giỏ hàng thành công ');
+        }
+        else
+        {
+            $cart=new shoppingcart;
+            $cart->idUser=$idUser;
+            $cart->idsp=$id;
+            $cart->name=$sanpham->name;
+            $cart->qty=1;
+            if($sanpham->giakm == 0) 
+            {
+                  $cart->price=$sanpham->gia;
+            } 
+           else
+            {
+                 $cart->price=$sanpham->giakm;
+            } 
+            $cart->img=$sanpham->image;
+            $cart->save();
+            // $content = Cart::content();
+            return redirect()->back()->with('thongbao','Thêm vào giỏ hàng thành công ');
+        }
+    }
+    public function getgiohang($idUser)
+    {
+        $cart=shoppingcart::where('idUser',$idUser)->paginate(3);
+         $cart1=shoppingcart::where('idUser',$idUser)->first();
+         return view('shopping_cart',compact('cart','cart1'));
+    }
+    public function logincart()
+        {
+             return redirect('login')->with('thongbao','Đăng nhập để mua hàng');
+        }
+    public function decart($id)
+    {
+        $decart=shoppingcart::find($id);
+        $decart->delete();
+        return redirect()->back()->with('thongbao','Xóa Thành công');
+    }
+    public function quenmatkhau()
+    {
+        return view('resetpassword');
+    }
+    public function resetpassword(Request $request)
+    {
+       
+       $user=User::where('email',$request->email)->first();
+       if(count($user)>0)
+       {
+            $password=str_random(11);
+            $user->update([
+                'password' =>Hash::make($password)
+            ]);
+            Mail::send('mailreset', ['password'=>$password], function($message) use ($request,$user) {
+            $message->from('cuonganh365@gmail.com','ShopHoa360');
+             $message->to( $request->email,$user->name)   
+                ->subject('reset your password on ShopHoa360 ');
+        });
+         return redirect('login')->with('thongbao','Mật khẩu mới đã được gửi tới email '.$request->email)->withinput();
+       }
+       else
+       {
+            return redirect()->back()->with('thongbao','Email này chưa được đăng kí');
+       }   
+    }
+    //////
+    public function adminthemuser(Request $request)
+    {
+        $this->validate($request,
+            [
+                'email'=>'unique:users,email|required',//min:3
+                're_password'=>'same:password|required',
+                'password'=>'required',
+                'name'=>'required',
+                'rdoLevel'=>'required',
+            ],
+            [
+                'email.required'=>'Bạn chưa nhập email',
+                'rdoLevel.required'=>'Vui lòng cấp quyền cho tài khoản',
+                'name.required'=>'Bạn chưa nhập name',
+                'password.required'=>'Bạn chưa nhập password',
+                're_password.required'=>'Bạn chưa nhập ô xác nhận mật khẩu',
+                'email.unique'=>'email đã tồn tại',
+                're_password.same'=>'Mật khẩu không trùng nhau',
+            ]
+        );
+        $user=new User();
+        $user=new User();
+        $user->name=$request->name;
+        $user->email=$request->email;
+        $user->password=Hash::make($request->password);
+        $user->phone='';
+        $user->address='';
+        if($request->rdoLevel == 1)
+        {
+            $user->loaiuser=1;
+        }
+        else
+        {
+             $user->loaiuser=2;
+        }
+        $user->confirmed=1;
+        $user->save();
+         return redirect()->back()->with('thongbao','Thêm user thành công')->withinput();
+    }
+
+    public function getsua($id)
+    {
+        $user = User::find($id);
+        return view('admin.sua_useradmin',compact('user'));
+    }
+    public function postsua(Request $request,$id)
+    {
+        $this->validate($request,
+          [       
+                
+                'name'=>'required',
+                'rdoLevel'=>'required',
+            ],
+            [
+                'rdoLevel.required'=>'Vui lòng cấp quyền cho tài khoản',
+                'name.required'=>'Bạn chưa nhập name',
+            ]);
+        $user=user::where('id',$id)->update(['name'=>$request->name,'loaiuser'=> $request->rdoLevel]);     
+        if($request->password || $request->re_password != null)
+        {
+            $this->validate($request,
+          [       
+                're_password'=>'same:password|required',
+                'password'=>'required',
+            ],
+            [
+                'password.required'=>'Bạn chưa nhập password',
+                're_password.required'=>'Bạn chưa nhập ô xác nhận mật khẩu',
+                're_password.same'=>'Mật khẩu không trùng nhau',
+            ]);
+             $user=user::where('id',$id)->update([
+                'password'=>Hash::make($request->password),
+            ]);
+        }
+        return redirect()->back()->with('thongbao','Update thành công');
+    }
+    public function getcheckout($id)
+    {
+        $cart=shoppingcart::where('idUser',$id)->get();
+        return view('checkout',compact('cart'));
+    }
+
+    public function order(Request $request,$id)
+    {
+        $giohang=shoppingcart::where('idUser',$id)->get();
+        $customer=new customer();
+        $customer->name=$request->name;
+        $customer->sex=$request->gender;
+        $customer->email=$request->email;
+        $customer->address=$request->address;
+        $customer->phone=$request->phone;
+        $customer->note=$request->note;
+        $customer->save();
+        
+         $bill=new bill();
+        $bill->iduser=$id;
+        $bill->idkh=$customer->id;
+        $bill->total=$request->total;
+        $bill->payment=$request->payment_method;
+        $bill->save();
+        foreach($giohang as $giohang )
+        {
+        $order=new Order();
+        $order->idbill=$bill->id;
+        $order->idsp=$giohang->idsp;
+        $order->name=$giohang->name;
+        $order->qty=$giohang->qty;
+        $order->price=$giohang->price;
+        $order->save();
+        $giohang->delete();
+        }
+         
+       
+        return redirect()->back()->with('thongbao','Đặt hàng thành công');
+    }
 }
+
+
