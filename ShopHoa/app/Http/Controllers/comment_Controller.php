@@ -17,6 +17,7 @@ class comment_Controller extends Controller
          $comment->delete();
          return redirect()->back()->with('thongbao','Xóa thành công ');
    }
+   
    public function postcmt($id,Request $request)
    {
          $comment =new comment;

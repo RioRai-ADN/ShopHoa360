@@ -131,7 +131,7 @@
                 <div class="well">
                     <p style="font-size: 1.5em"> Viết bình luận ...<span class="glyphicon glyphicon-pencil" ></span></p>
                     <br>
-                    <form action="../../comment/{{$chitiet->id}}" method="post" role="form">
+                    <form action="comment/{{$chitiet->id}}" method="post" role="form">
                     	<input type="hidden" name="_token" value="{{ csrf_token() }}" />
                         <div class="form-group">
                             <textarea class="form-control" rows="3" name="NoiDung"></textarea>
