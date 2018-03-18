@@ -7,7 +7,7 @@
 
 					<div class="row">
 						<div class="col-sm-4">
-							<img src="qt69admin/image/product/{{$chitiet->image}}" alt="cường đẹp trai =)))"  height="243px" width="100%">	
+							<img src="qt69admin/image/product/{{$chitiet->image}}" alt="Hinh anh hoa"  height="243px" width="100%">	
 							@if($chitiet -> giakm!=0)
 													<div class="ribbon-wrapper"><div class="ribbon sale">Sale</div></div>
 												@endif

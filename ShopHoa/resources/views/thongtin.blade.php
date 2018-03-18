@@ -21,7 +21,7 @@
 		<div class="col-sm-8" style="border: 1px solid  #bfbfbf;border-radius: 10px;padding:25px 30px 30px 30px;box-shadow: 2px 0px 3px  #bfbfbf">
 			<div class="gavatar-box clearfix" style="border-bottom: 1px dotted #dfdfdf;">
 				<img alt="" src="https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=70&amp;r=g" data-lazy-src="https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=70&amp;r=g" data-lazy-srcset="https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=140&amp;r=g 2x" class="avatar avatar-70 photo img-circle     lazyloaded" height="70" width="70" srcset="https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=140&amp;r=g 2x" style="float: left;"><noscript>&lt;img alt='' src="data:image/gif;base64,R0lGODdhAQABAPAAAP///wAAACwAAAAAAQABAEACAkQBADs=" data-lazy-src='https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=70&amp;#038;r=g' data-lazy-srcset='https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=140&amp;#038;r=g 2x' class='avatar avatar-70 photo img-circle' height='70' width='70' /&gt;&lt;noscript&gt;&lt;img alt='' src='https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=70&amp;#038;r=g' srcset='https://secure.gravatar.com/avatar/70034fb0e6701f852d856c1d2cf1059c?s=140&amp;#038;r=g 2x' class='avatar avatar-70 photo img-circle' height='70' width='70' /&gt;</noscript>				<div class="meta">
-					<h3>Quốc Cường</h3>
+					<h3>Duy Anh</h3>
 					<a href="Logoutindex" title="Logout">Logout</a>	
 								</div><br>
 			</div><br>

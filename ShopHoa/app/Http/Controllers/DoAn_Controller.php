@@ -53,11 +53,11 @@ class DoAn_Controller extends Controller
             ]);
         if(Auth::attempt(['email'=>$request->email,'password'=>$request->password, 'confirmed' => 1]))
            {
-             return redirect('../'); 
+             return redirect('./'); 
            }
         else
         {
-            return redirect('login')->with('thongbao','Đăng nhập không thành công');
+            return redirect('login')->withErrors('Đăng nhập không thành công');
         }
     }
 

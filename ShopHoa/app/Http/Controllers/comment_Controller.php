@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\slide;
 use App\sanpham;
 use App\loaisp;
-use App\User;
+use App\User;s
 use App\comment;
 use App\Events\redis_event;
 use Hash;
@@ -17,7 +17,7 @@ class comment_Controller extends Controller
          $comment->delete();
          return redirect()->back()->with('thongbao','Xóa thành công ');
    }
-   
+
    public function postcmt($id,Request $request)
    {
          $comment =new comment;

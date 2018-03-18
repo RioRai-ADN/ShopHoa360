@@ -91,7 +91,7 @@
 				<div class="visible-xs clearfix"></div>
 				<nav class="main-menu">
 					<ul class="l-inline ov">
-						<li><a href="/">Trang chủ</a></li>
+						<li><a href="#">Trang chủ</a></li>
 						<!--  <li><a href="{{route('trang-chu')}}">Trang chủ</a></li> -->
 						<li><a href="#
 							">Sản phẩm</a>
